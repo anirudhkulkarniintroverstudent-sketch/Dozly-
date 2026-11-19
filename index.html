@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b0a">
+  <meta name="description" content="DOZLY is your all-in-one Notion workspace for managing studies, assignments, notes and student life.">
+  <title>DOZLY — Your student life, in sync.</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #090b0a;
+      --surface: #111512;
+      --surface2: #171d19;
+      --text: #f3f6f2;
+      --muted: #9ba69e;
+      --accent: #c3f36b;
+      --border: rgba(255,255,255,.09);
+      --max: 1120px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    button { font: inherit; }
+
+    .container {
+      width: min(var(--max), calc(100% - 40px));
+      margin: auto;
+    }
+
+    .accent { color: var(--accent); }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(9,11,10,.88);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 27px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+    }
+
+    .logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #10140b;
+      padding: 13px 22px;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 14px;
+      transition: .2s ease;
+      border: 1px solid var(--accent);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(195,243,107,.15);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: none;
+    }
+
+    .hero {
+      padding: 110px 0 90px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 500px;
+      height: 350px;
+      background: rgba(195,243,107,.08);
+      filter: blur(120px);
+      border-radius: 50%;
+      left: 50%;
+      top: 10px;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      border: 1px solid rgba(195,243,107,.25);
+      background: rgba(195,243,107,.07);
+      color: var(--accent);
+      border-radius: 50px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 26px;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      line-height: 1.12;
+      letter-spacing: -1.5px;
+    }
+
+    h1 {
+      font-size: clamp(44px, 7vw, 78px);
+      max-width: 850px;
+      margin: auto;
+    }
+
+    .hero p {
+      color: var(--muted);
+      max-width: 590px;
+      margin: 24px auto 30px;
+      font-size: 17px;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 13px;
+      flex-wrap: wrap;
+    }
+
+    .hero-note {
+      margin-top: 20px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .preview-wrap {
+      margin: 75px auto 0;
+      max-width: 900px;
+      padding: 9px;
+      border: 1px solid rgba(195,243,107,.2);
+      background: linear-gradient(140deg,#1c261d,#101310);
+      border-radius: 18px;
+      box-shadow: 0 30px 100px rgba(0,0,0,.4);
+    }
+
+    .preview {
+      background: #101410;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 25px;
+      text-align: left;
+    }
+
+    .preview-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 22px;
+    }
+
+    .preview-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 13px;
+    }
+
+    .mini-card {
+      padding: 17px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      min-height: 105px;
+    }
+
+    .mini-card small {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 21px;
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .mini-card .green { color: var(--accent); }
+
+    .section { padding: 95px 0; }
+
+    .section-heading {
+      text-align: center;
+      max-width: 650px;
+      margin: 0 auto 48px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(32px, 5vw, 48px);
+      margin-bottom: 15px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 16px;
+    }
+
+    .feature {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 27px;
+      border-radius: 14px;
+      transition: .2s;
+    }
+
+    .feature:hover {
+      border-color: rgba(195,243,107,.4);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      background: rgba(195,243,107,.1);
+      border-radius: 10px;
+      color: var(--accent);
+      font-size: 20px;
+      margin-bottom: 22px;
+    }
+
+    .feature h3 {
+      font-size: 19px;
+      letter-spacing: -.5px;
+      margin-bottom: 10px;
+    }
+
+    .feature p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 25px;
+    }
+
+    .step {
+      padding: 25px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .step-number {
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--accent);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .step h3 { font-size: 21px; margin-bottom: 10px; }
+
+    .step p { color: var(--muted); font-size: 14px; }
+
+    .pricing-box {
+      max-width: 650px;
+      margin: auto;
+      padding: 42px;
+      border: 1px solid rgba(195,243,107,.25);
+      background: linear-gradient(145deg,#151c15,#101310);
+      border-radius: 18px;
+      text-align: center;
+    }
+
+    .pricing-box h2 { font-size: 38px; margin: 15px 0; }
+
+    .price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 55px;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 15px 0;
+    }
+
+    .pricing-box p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    .included {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 25px 0 30px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .included li::before {
+      content: "✓";
+      color: var(--accent);
+      margin-right: 9px;
+    }
+
+    .faq-list {
+      max-width: 750px;
+      margin: auto;
+    }
+
+    details {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    summary::after {
+      content: "+";
+      color: var(--accent);
+      font-size: 20px;
+    }
+
+    details[open] summary::after { content: "−"; }
+
+    details p {
+      color: var(--muted);
+      font-size: 14px;
+      padding-top: 14px;
+      max-width: 650px;
+    }
+
+    .final-cta {
+      text-align: center;
+      padding: 90px 20px;
+      background: radial-gradient(ellipse at center,rgba(195,243,107,.08),transparent 65%);
+    }
+
+    .final-cta h2 {
+      font-size: clamp(35px,5vw,54px);
+      margin-bottom: 17px;
+    }
+
+    .final-cta p {
+      color: var(--muted);
+      margin-bottom: 27px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .mobile-menu { display: none; }
+
+    @media(max-width: 760px) {
+      .nav-links { display: none; }
+      .mobile-menu { display: block; }
+      .mobile-menu a { color: var(--accent); font-weight: 700; }
+      .hero { padding: 80px 0 55px; }
+      .preview-grid { grid-template-columns: 1fr 1fr; }
+      .features { grid-template-columns: 1fr 1fr; }
+      .how-grid { grid-template-columns: 1fr; gap: 5px; }
+      .section { padding: 70px 0; }
+    }
+
+    @media(max-width: 480px) {
+      .container { width: min(100% - 30px,var(--max)); }
+      .features { grid-template-columns: 1fr; }
+      .preview-grid { grid-template-columns: 1fr 1fr; }
+      .preview { padding: 14px; }
+      .mini-card { padding: 12px; }
+      .pricing-box { padding: 28px 18px; }
+      .included { grid-template-columns: 1fr; }
+      .hero p { font-size: 15px; }
+      .nav-inner { height: 66px; }
+    }
+
+    @media(prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="logo">DOZ<span>LY</span></a>
+
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <div class="mobile-menu">
+        <a href="#pricing">Get DOZLY ↗</a>
+      </div>
+
+      <a href="#pricing" class="btn">Get DOZLY ↗</a>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <div class="container">
+        <span class="eyebrow">Your academic life, organised</span>
+
+        <h1>Your student life,<br><span class="accent">in sync.</span></h1>
+
+        <p>
+          One organised workspace for your classes, assignments, notes,
+          goals and everything in between. Spend less time managing your
+          student life and more time moving forward.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#pricing" class="btn">Get DOZLY ↗</a>
+          <a href="#features" class="btn btn-outline">Explore features</a>
+        </div>
+
+        <div class="hero-note">
+          Built with Notion · Customisable · Designed for students
+        </div>
+
+        <div class="preview-wrap">
+          <div class="preview">
+            <div class="preview-top">
+              <div>
+                <div class="logo" style="font-size:20px">DOZ<span>LY</span></div>
+                <div class="preview-label">Your student workspace</div>
+              </div>
+              <span class="accent">● Workspace</span>
+            </div>
+
+            <div class="preview-grid">
+              <div class="mini-card">
+                <small>YOUR WORKSPACE</small>
+                <strong>Welcome back.</strong>
+                <small>Make today count.</small>
+              </div>
+              <div class="mini-card">
+                <small>STUDY PLANNER</small>
+                <strong class="green">Organise</strong>
+                <small>Plan your learning</small>
+              </div>
+              <div class="mini-card">
+                <small>TASK MANAGER</small>
+                <strong>Tasks</strong>
+                <small>Stay on track</small>
+              </div>
+              <div class="mini-card">
+                <small>KNOWLEDGE HUB</small>
+                <strong>Notes</strong>
+                <small>Keep ideas together</small>
+              </div>
+              <div class="mini-card">
+                <small>PROGRESS</small>
+                <strong class="green">Improve</strong>
+                <small>Track your growth</small>
+              </div>
+              <div class="mini-card">
+                <small>GOALS</small>
+                <strong>Focus</strong>
+                <small>Work towards more</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-heading">
+          <span class="eyebrow">Everything in one place</span>
+          <h2>Less chaos.<br><span class="accent">More clarity.</span></h2>
+          <p>Everything you need to bring structure to your academic routine.</p>
+        </div>
+
+        <div class="features">
+          <article class="feature">
+            <div class="feature-icon">▦</div>
+            <h3>Student Dashboard</h3>
+            <p>Your central hub for navigating your academic life and important information.</p>
+          </article>
+
+          <article class="feature">
+            <div class="feature-icon">✓</div>
+            <h3>Task Management</h3>
+            <p>Organise assignments, deadlines and everyday responsibilities.</p>
+          </article>
+
+          <article class="feature">
+            <div class="feature-icon">◷</div>
+            <h3>Study Planner</h3>
+            <p>Structure your study sessions and make your time more intentional.</p>
+          </article>
+
+          <article class="feature">
+            <div class="feature-icon">✎</div>
+            <h3>Notes & Knowledge Hub</h3>
+            <p>Keep your notes, short summaries and learning resources organised.</p>
+          </article>
+
+          <article class="feature">
+            <div class="feature-icon">↗</div>
+            <h3>Progress Tracking</h3>
+            <p>Keep track of your academic progress and personal goals.</p>
+          </article>
+
+          <article class="feature">
+            <div class="feature-icon">◎</div>
+            <h3>Academic Organisation</h3>
+            <p>Bring your academic information into one structured workspace.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="container">
+        <div class="section-heading">
+          <span class="eyebrow">Getting started</span>
+          <h2>Three steps.<br><span class="accent">A clearer routine.</span></h2>
+          <p>No complicated setup. Start organising your student life in minutes.</p>
+        </div>
+
+        <div class="how-grid">
+          <div class="step">
+            <div class="step-number">01 / PURCHASE</div>
+            <h3>Get DOZLY</h3>
+            <p>Purchase the digital workspace through our secure Gumroad checkout.</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">02 / DUPLICATE</div>
+            <h3>Open in Notion</h3>
+            <p>Use the provided template link to duplicate the workspace into your Notion account.</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">03 / PERSONALISE</div>
+            <h3>Make it yours</h3>
+            <p>Add your subjects, tasks, notes and goals. Adapt the workspace to your routine.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="container">
+        <div class="pricing-box">
+          <span class="eyebrow">One workspace. More control.</span>
+          <h2>Start with <span class="accent">DOZLY.</span></h2>
+          <div class="price">$4.99</div>
+          <p>One-time purchase. No recurring subscription from DOZLY.</p>
+
+          <ul class="included">
+            <li>Student dashboard</li>
+            <li>Study planner</li>
+            <li>Task management</li>
+            <li>Notes and knowledge hub</li>
+            <li>Progress tracking</li>
+            <li>Customisable workspace</li>
+          </ul>
+
+          <a
+            href="https://anirudhintrovert.gumroad.com/l/rdqmzv"
+            class="btn"
+            style="width:100%"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Get DOZLY now ↗
+          </a>
+
+          <div class="hero-note">Secure checkout powered by Gumroad.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-heading">
+          <span class="eyebrow">Questions answered</span>
+          <h2>Frequently asked <span class="accent">questions.</span></h2>
+        </div>
+
+        <div class="faq-list">
+          <details>
+            <summary>Is DOZLY a mobile application?</summary>
+            <p>No. DOZLY is a digital student workspace built in Notion. You can access it through Notion's supported web and mobile applications.</p>
+          </details>
+
+          <details>
+            <summary>Do I need a Notion account?</summary>
+            <p>Yes. You need a Notion account to duplicate and use your DOZLY workspace. Notion offers a free plan.</p>
+          </details>
+
+          <details>
+            <summary>Can I customise DOZLY?</summary>
+            <p>Yes. You can adapt the workspace to your subjects, study routine, notes and personal preferences.</p>
+          </details>
+
+          <details>
+            <summary>Is DOZLY suitable for different students?</summary>
+            <p>DOZLY is designed as a flexible workspace for students who want to organise their academic responsibilities and learning resources.</p>
+          </details>
+
+          <details>
+            <summary>Is this a recurring subscription?</summary>
+            <p>DOZLY is sold as a one-time digital product purchase. Any separate Notion plan or service charges are subject to their respective providers.</p>
+          </details>
+
+          <details>
+            <summary>How do I receive the product?</summary>
+            <p>After purchasing through Gumroad, follow the instructions provided on the product page to access your digital workspace.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <div class="container">
+        <span class="eyebrow">Your next chapter starts here</span>
+        <h2>Make room for <span class="accent">what matters.</span></h2>
+        <p>Bring your student life into sync with DOZLY.</p>
+        <a href="https://anirudhintrovert.gumroad.com/l/rdqmzv"
+           class="btn" target="_blank" rel="noopener noreferrer">
+          Get DOZLY ↗
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <a href="#" class="logo">DOZ<span>LY</span></a>
+      <span>© <span id="year"></span> DOZLY. All rights reserved.</span>
+      <span>Built for better student organisation.</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>
